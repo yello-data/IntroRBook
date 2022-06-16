@@ -1,5 +1,5 @@
 --- 
-title: "R en Ciència Política i Relacions Internacionals"
+title: "R en Ciències Socials"
 author: "Jordi Mas Elias"
 date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
@@ -12,36 +12,21 @@ biblio-style: apalike
 lang: ca
 link-citations: yes
 github-repo: rstudio/bookdown-demo
-description: "Aquest llibre té com a principal intenció ensenyar R."
+description: "Aquest llibre té com a principal objectiu l'ensenyament d'R en línia als estudiants de Ciència Política i Relacions Internacionals."
 ---
 
 # Prefaci{-}
+
+Aquest llibre té com a principal objectiu l'ensenyament d'R en línia a estudiants de Ciències Socials, particularment de Ciència Política, Relacions Internacionals i Sociologia. Bona part del que es mostra en aquests mòduls es basa en l'experiència de diversos semestres de docència a la Universitat Oberta de Catalunya. Això vol dir que bona part del que s'ensenya aquí és fruit de les contribucions de desenes d'estudiants, que amb les seves aportacions han ajudat a millorar l'assignatura i fer més fàcil l'aprenentatge semestre a semestre.
+
 
 
 ```{r include=FALSE}
 # automatically create a bib database for R packages
 knitr::write_bib(c(
-  .packages(), 'bookdown', 'knitr', 'rmarkdown'
+  .packages(), 'bookdown', 'knitr', 'rmarkdown', 'dplyr', 'ggplot2',
+  'tidyr', 'readxl', 'readr', 'tidyverse', 'pacman'
 ), 'packages.bib')
-```
-
-
-You can label chapter and section titles using `{#label}` after them, e.g., we can reference Chapter \@ref(intro)
-
-Figures and tables with captions will be placed in `figure` and `table` environments, respectively.
-
-```{r nice-fig, fig.cap='Here is a nice figure!', out.width='80%', fig.asp=.75, fig.align='center'}
-par(mar = c(4, 4, .1, .1))
-plot(pressure, type = 'b', pch = 19)
-```
-
-Reference a figure by its code chunk label with the `fig:` prefix, e.g., see Figure \@ref(fig:nice-fig). Similarly, you can reference tables generated from `knitr::kable()`, e.g., see Table \@ref(tab:nice-tab).
-
-```{r nice-tab, tidy=FALSE}
-knitr::kable(
-  head(iris, 20), caption = 'Here is a nice table!',
-  booktabs = TRUE
-)
 ```
 
 
