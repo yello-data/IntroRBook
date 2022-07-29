@@ -1,4 +1,4 @@
-book_filename: "bookdown-demo"
+book_filename: "intro-r-cat"
 language:
   label:
     fig: 'Figura '

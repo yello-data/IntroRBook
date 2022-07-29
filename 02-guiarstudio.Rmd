@@ -124,6 +124,7 @@ Ara ja tenim les **quatre finestres** a la interfície d'RStudio, amb les quals 
 ![](img/four-screens.png){width=80%}
 
 En aquestes finestres, hi ha algunes pestanyes (marcades amb requadre vermell a la imatge) que també utilitzarem. En veurem la utilitat més endavant. Per ara, només ens cal saber que existeixen:
+
 -	La pestanya Plots (finestra Files) mostra els gràfics que generem amb R.
 -	La pestanya Viewer (finestra Files) mostra els arxius HTML que generem amb R.
 -	La pestanya Help (finestra Files) mostra els menús d'ajuda. La pestanya Packages (finestra Files) mostra els paquets que tenim instal·lats i carregats.
@@ -141,6 +142,7 @@ En aquestes finestres, hi ha algunes pestanyes (marcades amb requadre vermell a 
 
 
 ## Paquets{#packages}
+
 RStudio és semblant al sistema operatiu Windows. Quan acabem de comprar-lo i l'obrim, està pràcticament buit. No té cap programa instal·lat. Si volem que Windows ens serveixi d'alguna cosa, haurem d'instal·lar-hi programes com Word, Excel i algun navegador. Amb R passa el mateix. Quan obrim R per primera vegada, està més aviat buit per dins de sèrie. Té incorporats alguns petits programes (a partir d'ara dels programes d'R en direm **paquets** o **llibreries**), però els programes més potents i que els usuaris utilitzen més sovint no venen instal·lats de sèrie. A Windows, el més normal és que haguem d'invertir uns quants diners per comprar i instal·lar programes. A R no cal comprar-los perquè tots són gratis. El que sí que haurem de fer serà instal·lar-los.
 
 
@@ -615,6 +617,10 @@ Un aquest cas, l'únic que haurem de fer és assegurar-nos que tinguem l'arxiu e
 ```
 ches <- read_csv("Candidate_Ukraine_2014.csv")`
 ```
+Una altra opció per importar arxius, molt pràctica, és clicar directament a l'arxiu al directori de treball i seleccionar Import Dataset:
+
+![](img/import-dataset.png){width=50%}
+
 En el següent exercici descarregarem un arxiu d'Excel, el situarem al nostre directori de treball i el convertirem en un objecte d'R.
 
 

@@ -1,76 +1,111 @@
+---
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
 # L'estructura de dades d'R
 
-```{r setup, include=FALSE}
+```{r stup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(dplyr)
 ```
 
-Per a qualsevol usuari, l'estructura de dades d'R acaba resultant molt senzilla, però cal treballar-la bé i amb molta atenció perquè ens sigui del tot intuïtiva. En aquest mòdul aprendrem, de forma molt més sistemàtica, el procediment que haurem de repetir una i una altra vegada quan treballem amb R: 
+Per a qualsevol usuari, l'estructura de dades d'R acaba resultant molt senzilla, però per a arribar a aquest punt cal tenir molt clares algunes regles molt bàsiques del funcionament d'R. Si entenem aquestes regles, molt senzilles, ens serà molt fàcil i intuïtiu treballar amb el programa. És per això que **cal seguir aquest mòdul amb moltíssima atenció**. A continuació aprendrem, de forma molt sistemàtica, el procediment que haurem de repetir una i una altra vegada quan treballem amb R. En primer lloc, aprendrem a **crear objectes (1)**, que ens serveixen per emmagatzemar informació. Principalment, coneixerem tres maneres diferents d'emmagatzemar-la:
 
-1. Aprendrem a **crear objectes**, com el marc de dades que veiem a la taula \@ref(fig:df-intro), que contindran dades sobre temes que ens resultin interessants d'analitzar. 
-2. Aprendrem a analitzar aquests marcs de dades aplicant-hi algunes funcions bàsiques.
+  - A. Els [**valors**](#valors), que són la unitat més petita d'R.
+  - B. Els [**vectors**](#vectors), que estan formats per una cadena de valors.
+  - C. I els [**marc de dades**](#marcsdades), formats per varis vectors d'igual longitud.
+  
+Fixem-nos en el marc de dades que veiem a la taula \@ref(fig:df-intro), que representa les dades de participació de les últimes eleccions en diversos països. El **marc de dades (C)** està format per varis **vectors (B)**. Cada vector està representat en una columna diferent del marc de dades. Tots els vectors tenen la mateixa longitud. En aquest exemple, tots tenen longitud cinc. Això significa que cada vector està format per cinc **valors (A)**. Cada valor és una casella del marc de dades i és la unitat més petita d'R que estudiarem.
 
 ```{r df-intro, echo = FALSE, fig.cap= "Els tres elements d'un marc de dades"}
 knitr::include_graphics("img/intro-dataframe.png")
 ```
 
-Aquest marc de dades és un tipus d'objecte d'R. Els objectes emmagatzemen informació i principalment coneixerem tres maneres d'emmagatzemar-la:
+El codi que hem utilitzat per crear el marc de dades és el següent. Necessitarem tenir carregat el paquet `dplyr`, necessari per executar la funció `tibble()`:
 
-  - A. Els [**valors**](#valors) són la unitat més petita d'R.
-  - B. Una cadena de valors forma un [**vector**](#vectors).
-  - C. Varis vectors d'igual longitud formen un [**marc de dades**](#marcsdades).
-
-El codi per crear aquest marc de dades és el següent:
-
-```{r eval = FALSE}
-elections <- tibble(country = c("Spain", "Japan", "Germany", "Chile", "Australia"), 
+```{r echo = TRUE, eval = TRUE, results = 'hide'}
+elections <- tibble(country = c("Spain", "Japan", "Germany", 
+                                "Chile", "Australia"), 
                     year = as.integer(c(2021, 2018, 2019, 2019, 2020)), 
-                    date = as.Date(c("2021/02/23", "2018/05/15", "2019/06/04", "2019/11/02", "2020/01/23")), 
-                    turnout = c(74.5, 85.3, 66.1, 77.9, 78.8), 
+                    date = as.Date(c("2021/02/23", "2018/05/15", 
+                                     "2019/06/04", "2019/11/02", "2020/01/23")), 
+                    turnout = c(0.74, 0.85, 0.66, 0.77, 0.78), 
                     continent = factor(c("Europe", "Asia", "Europe", "America", "Oceania")), 
                     presidential = c(TRUE, FALSE, FALSE, FALSE, TRUE))
 ```
 
+El marc de dades és un objecte d'R. I per obtenir informació dels objectes hi **aplicarem funcions (2)** que anirem coneixent mica en mica a la segona part d'aquest mòdul, encara que ara veurem un petit tast. Per exemple, a l'objecte `eleccions` podem aplicar-hi la funció `dim()` per saber-ne les seves dimensions^[Com observem, si apliquem la funció `dim()` a un marc de dades ens retorna un vector amb dos valors. El primer valor representa la quantitat de files i el segon valor la quantitat de columnes del marc de dades.]. Com veiem, el marc de dades té cinc files i sis columnes.
 
+```{r collapse = TRUE}
+dim(elections)
+```
 
-2. Coneixerem **funcions**, com `glimpse()`, que serveixin per donar-nos informació, modificar o analitzar els objectes d'R.
+També podem obtenir els valors únics del vector `year` del marc de dades `elections` amb la funció `unique()`. Com veiem, ens retorna només quatre valors, perquè el `2019` està repetit i només ens retorna els valors 'únics'.
 
-   - Les funcions tenen varis **arguments**.
+```{r collapse = TRUE}
+unique(elections$year)
+```
 
+O també podem saber quina ha estat la mitjana de participació (`turnout`) dels cinc països dels què tenim dades amb la funció `mean()`.
 
-s'estructuren en diferents tipus d'objectes, als quals els hi aplicarem funcions. 
+```{r collapse = TRUE}
+mean(elections$turnout)
+```
 
+Hem de confessar que rarament crearem marcs de dades des de zero amb R. Això ho deixarem per altres programes com, per exemple, Microsoft Excel. El que farem normalment serà crear o obtenir bases de dades d'altres llocs i importar-les i treballar-les amb R. Així doncs, quin sentit té aprendre a crear marcs de dades amb R en aquest mòdul? Doncs tot el sentit del món. El cas és que per aprendre a treballar amb R és imprescindible conèixer bé l'estructura dels seus objectes i funcions. I la millor manera per fer-ho és aprendre a crear tots aquests elements de zero. Així ens serà molt més fàcil explotar els avantatges que ens ofereix el programa.
 
+Així doncs, abans de començar, recapitularem algunes idees claus. Treballar amb R consisteix més o menys en això:
 
+- Carreguem els **paquets** que necessitem.
+- Els paquets contenen principalment **objectes** i **funcions**, que també podem crear pel nostre compte.
+- Importem bases de dades, que sovint les trobarem als mateixos paquets en forma d'objecte.
+- Treballarem amb R, que consisteix bàsicament a **aplicar funcions a objectes**.
 
-
-
-
-Rarament crearem marcs de dades de zero amb R, perquè és més fàcil de fer-ho amb programes com Excel. Amb R gairebé sempre importarem marcs de dades i els treballarem. Llavors, quin sentit té aprendre a crear un marc de dades amb R? El cas és que per treballar marcs de dades amb R és imprescindible conèixer bé la seva estructura. I la millor manera per conèixer l'estructura de dades d'R és aprendre a crear marcs de dades. Així ens serà molt més fàcil explotar els avantatges que ens ofereix el programa.
-
-
-
-
-Ordenem una mica les idees que ja sabem a hores d'ara sobre R:
-
-- Per treballar amb R necessitem **paquets**, que haurem de tenir prèviament instal·lats.
-- Els paquets **s'activen**, un per un, amb la funció `library()`^[O amb funcions com `p_load()` del paquet `pacman`.].
-- Els paquets contenen principalment **objectes** i **funcions**. També podem **crear** objectes i funcions pel nostre compte.
-- Treballar amb R consisteix bàsicament a **aplicar funcions a objectes**.
-
+Anem a veure amb detall què són els objectes i les funcions.
 
 
 
 ## Objectes
 
-Un **objecte** és un conjunt de dades que es troba emmagatzemat a R amb un nom determinat. Per emmagatzemar un conjunt de dades a R sempre utilitzarem el símbol `<-`. A l'esquerra del símbol posarem el `nom` de l'objecte i a la dreta les dades que volem emmagatzemar. Per exemple, amb el codi següent decidim emmagatzemar la dada `100` com a objecte que s'anomeni `nom`:
+Un **objecte** és un conjunt de dades que es troba emmagatzemat a R amb un nom determinat. Per emmagatzemar qualsevol objecte a R sempre utilitzarem el símbol `<-`. A l'esquerra del símbol posarem el `nom` de l'objecte i a la dreta les dades que volem emmagatzemar. Per exemple, amb el codi següent decidim emmagatzemar el nombre `100` en un objecte anomenat `nom` i a continuació el reproduïm a la consola:
 
 ```{r collapse = TRUE}
 nom <- 100
 nom
 ```
 
-Principalment, treballarem amb tres tipus d'objectes^[N'hi ha d'altres que no estudiarem, com les matrius de dades (*matrix*) o els *arrays*.]:
+Hi ha algunes coses que hem de saber en la creació d'objectes:
+
+- Podem donar el nom que vulguem a un objecte. Les úniques **limitacions** és que no pot començar amb una xifra ni tampoc pot contenir cap dels símbols següents: ^, !, $, @, +, -, /, *.
+```{r eval = FALSE}
+1objecte <- 34 #donarà error
+objecte$ <- 44 #donarà error
+```
+
+- Si anomenem un objecte amb el nom d’un altre objecte creat prèviament, R ens sobreescriurà l’objecte sense avisar-nos prèviament. 
+```{r collapse=T}
+nom <- 100
+nom <- 50
+nom
+```
+
+- R és sensible a les minúscules i a les majúscules, de manera que guardarà `Casa` i `casa` com dos objectes diferents. Recomanem utilitzar minúscules sempre que es pugui i fer servir la barra baixa en cas de voler separar paraules per a anomenar un mateix objecte.
+```{r collapse=T}
+Num <- 1001
+num <- 101
+Num
+num
+```
+
+- Quan guardem un objecte, no apareixerà res a la consola. Sabrem que l'objecte s'ha creat si observem el Global Environment o ho consultem amb les funcions `ls()` o `objects()`. Si volem veure reproduït l'objecte a la consola al mateix temps que el creem, haurem d'envoltar tot el codi entre parèntesi:
+```{r collapse=T}
+(bye <- 1)
+```
+
+
+Principalment, emmagatzemarem tres tipus d'objectes a R^[N'hi ha d'altres que no estudiarem, com les matrius de dades (*matrix*) o els *arrays*.]:
 
 1. [Valors](#valors)
 2. [Vectors](#vectors)
@@ -81,20 +116,23 @@ Principalment, treballarem amb tres tipus d'objectes^[N'hi ha d'altres que no es
 
 ### Valors{#valors}
 
-Els **valors** són la unitat més petita que pot prendre un objecte d'R. Principalment, trobem tres tipus de valors: 
+Els **valors** són la unitat més petita que pot prendre un objecte d'R. Principalment, trobem tres classes de valors: 
 
 - [Nombres](#nombres) 
 - [Caràcters](#caracters)
 - [Lògics](#logics)
 
-a) [**Nombres:**]{#nombres} Qualsevol nombre que emmagatzem a R quedarà registrat com a objecte numèric.
+#### Nombres{#nombres} 
+
+No cal definir amb gaire profunditat què és un nombre. Qualsevol nombre emmagatzemat a R quedarà registrat com a objecte numèric, que podrem consultar amb la funció `class()`.
 
 ```{r collapse = TRUE}
 d <- 4
 d
+class(d)
 ```
 
-També podem emmagatzemar resultats d'operacions. R només conserva a dins l'objecte el resultat numèric de l'operació, tal com veiem si imprimim `t`.
+R també podem emmagatzemar com a objecte els resultats d'operacions. Només ens conservarà el resultat numèric de l'operació, tal com veiem si imprimim `t`.
 
 ```{r collapse = TRUE, eval = TRUE}
 t <- (4 + 6 + 7) / 3
@@ -107,21 +145,23 @@ Podem fer operacions combinant valors numèrics i objectes que contenen valors n
 d + t + 1
 ```
 
-Fixem-nos que ens ha guardat els objectes `d` i `t` al Global Environment. També podem consultar en qualsevol moment els objectes que hem creat amb la funció `ls()`.
+Fixem-nos que els objectes `d` i `t` han quedat guardats al Global Environment. També podem consultar en qualsevol moment els objectes que hem creat amb la funció `ls()`.
 
-b) **Caràcters:** A R podem guardar qualsevol text que contingui caràcters, nombres i altres símbols. Sempre haurem de posar el text entre cometes.
+#### Caràcters{#caracters}
+
+A R podem guardar qualsevol text que contingui caràcters, nombres i altres símbols. Sempre haurem de posar el text entre cometes (`" "`).
 
 ```
 z <- "Obama"
 ```
-Molt important saber que R és sensible a les majúscules. Per R, `Obama` no és el mateix que `OBama` ni tampoc que `OBAMA`. Fem la prova: 
+Quan emmagatzemem caràcters, és molt important saber que R és sensible a les majúscules. Si volem crear un marc de dades sobre els presidents dels Estats Units, hem de saber que `Obama` no és el mateix que `OBama` ni tampoc que `OBAMA`. Fem la prova: 
 
 ```{r collapse = TRUE}
 "Obama" == "OBama"
 "OBAMA" == "OBAMA"
 ```
 
-En el primer cas li preguntem si `Obama` i `OBama` eren el mateix valor i ens ha respost que no, creant-nos com a resultat el valor lògic `FALSE`. En el segon cas ens ha confirmat que `OBAMA` i `OBAMA` són efectivament el mateix valor. Aquesta operació que acabem de fer és molt important com a punt de partida per comprendre l'utilitat dels valors lògics. 
+En el primer cas li preguntem si `Obama` i `OBama` eren el mateix valor i ens ha respost que **no**, creant-nos com a resultat el valor lògic `FALSE`. En el segon cas ens ha confirmat que `OBAMA` i `OBAMA` són efectivament el mateix valor. Aquesta operació que acabem de fer és molt important com a punt de partida per comprendre l'utilitat dels valors lògics, que veurem a continuació. 
 
 
 <div class="alert alert-danger">
@@ -132,26 +172,22 @@ En el primer cas li preguntem si `Obama` i `OBama` eren el mateix valor i ens ha
 </div>
 
 
-c) **Lògics:** Aristòtil defensava que, per lògica, les idees només poden ser veritat o mentida. De la mateixa manera, un valor lògic només pot ser veritat o mentida. Els podem emmagatzemar introduint `TRUE` (o el símbol `T`) o `FALSE` (o el símbol `F`).
+#### Lògics{#logics}
+
+Per lògica, deia Aristòtil, les idees només poden ser verdaderes o falses. No hi ha mitges veritats. De la mateixa manera, els valors lògics només pot ser veritat o fals. Els podem emmagatzemar introduint `TRUE` (o el símbol `T`) o `FALSE` (o el símbol `F`).
 
 ```{r collapse = TRUE}
-g <- T
-g
-w <- F
-w
+blonde <- T
+blonde
+thin <- F
+thin
 ```
 
-Amb els valors lògics podem fer operacions lògiques, com les que fèiem a les classes de filosofia. Per exemple, quan quelcom és verdader i fals (`T & F`), necessàriament ha de ser fals. Però si pot ser verdader o fals (`T | F`), això vol dir que pot ser verdader.
+Molts de vosaltres relacionareu els valors lògics amb les classes de filosofia de l'institut. I efectivament, els utilitzarem de la mateixa manera. Però també és important saber que els operadors lògics formen part del nostre dia a dia. Els utilitzem constantment quan fem cerques a Google o Instagram. Ho veurem més endavant, a l'apartat de [vectors lògics](#vector-logic). Per ara només necessitem saber que existeixen. I que la seva *lògica* és un xic complicada, però que ens seran de gran utilitat per treballar amb R.
 
-```{r collapse = TRUE}
-g & w
-g | w
-```
-
-Per ara només necessitem saber que existeixen els valors lògics. La seva *lògica* és un xic complicada, però hem de saber que ens seran de gran utilitat més endavant.
 
 <div class="alert alert-info" role="alert">
-**EXERCICIS VALORS:** Ves a la pàgina web següent i practica amb els exercicis que hi trobaràs.
+**EXERCICIS VALORS:** [Practica aquí](https://www.jordimas.cat/courses/dataanalysis_en/exercises/data_analysis_en_exercises_basic/#values) el què has après en aquesta secció.
 </div>
 
 ### Vectors{#vectors}
@@ -163,39 +199,42 @@ Quan creem un vector, sempre concatenarem els valors, separats per comes, dins d
 nom_objecte <- c(valor1, valor2, valor3, valor4)
 ```
 
-Sempre serà preferible que els noms dels objectes tinguin alguna cosa a veure amb el seu contingut. Per exemple, si creem un vector amb noms de països, ens serà més útil anomenar-lo `countries` que no pas `vector` o `names`, que no ens aporta cap informació substantiva sobre el seu contingut.
+Sempre serà preferible que els noms dels objectes tinguin alguna cosa a veure amb el seu contingut. Per exemple, si creem un vector amb noms de països, ens serà més útil anomenar-lo `countries` que no pas simplement `vector` o `names`, que no ens aporta cap informació substantiva sobre el seu contingut.
 
-A continuació crearem vectors de **longitud** cinc, que significa que estan formats per cinc valors. Però hem de saber que podem crear vectors d'un sol valor fins a vectors d'una longitud igual a milions de valors.
+En els següents subapartats crearem vectors de **longitud** cinc, que significa que estan formats per cinc valors. Però hem de saber que podem crear vectors d'un sol valor fins a vectors d'una longitud igual a milions de valors.
 
 
 #### Vectors numèrics
 
-Els vectors numèrics emmagatzemen nombres. Per crear-los, només hem de separar el valor de cada nombre per una coma. En el codi següent hem creat un objecte de nom `numeric` de longitud cinc. Si volem que els nombres tinguin decimals, haurem de marcar els decimals amb un punt com en el codi `num_dec`.  
+Els vectors numèrics emmagatzemen nombres. Per crear-los, només hem de separar el valor de cada nombre per una coma. En el codi següent hem creat un objecte de nom `numeric` de longitud cinc. Si volem que els nombres tinguin **decimals**, haurem de marcar els decimals amb un punt com en el codi `num_dec`.  
 
 ```{r collapse = TRUE}
 numeric <- c(4, 5, 6, 7, 8)
 num_dec <- c(74.5, 85.3, 66.1, 77.9, 78.8)
 ```
 
-Comprovem la longitud d'un dels vectors que hem creat amb la funció `length()`.
+Amb la funció `length()` comprovem que, efectivament, la longitud d'un dels vectors que hem creat és cinc.
 
 ```{r collapse = TRUE}
 length(num_dec)
 ```
 
-També podem utilitzar objectes creats anteriorment.
+També podem incloure a dins d'un vector objectes que haguem creat anteriorment i que continguin nombres. En el següent exemple, per crear l'objecte `num_mix` utilitzem l'objecte `e` i l'objecte `d`, que havíem creat anteriorment.
+
 ```{r collapse = TRUE}
 e <- 3
 num_mix <- c(1, 3, e, 4, d)
+num_mix
 ```
 
-I també podem utilitzar el símbol `:` per crear seqüències correlatives de valors. En aquest exemple, el primer valor del vector prendrà el valor de l'objecte `3` i la resta seran els nombres correlatius entre 4 i 7. Per tant, serà com si introduíssim `c(3, 4, 5, 6, 7)`, però estalviant-nos codi.
+Una opció ràpida per crear vectors numèrics que continguin seqüències correlatives de valors és utilitzar el símbol `:`. En aquest exemple, el primer valor del vector prendrà el valor de l'objecte `e` i la resta seran els nombres correlatius entre 4 i 7. Per tant, serà com si introduíssim `c(3, 4, 5, 6, 7)`, però estalviarem codi.
+
 ```{r collapse = TRUE}
 num_points <- c(e, 4:7)
 num_points
 ```
 
-Els vectors numèrics permeten fer operacions matemàtiques com sumar (`+`), restar (`-`), multiplicar (`*`) o dividir (`/`). Hi ha dos tipus d'operacions que podem fer:
+Els vectors numèrics permeten fer operacions matemàtiques com sumar (`+`), restar (`-`), multiplicar (`*`) o dividir (`/`). Entre tipus d'objectes, podem fer dos tipus d'operacions:
 
 a) **Vector amb un nombre:** Ens fa l'operació de tots els valors del vector pel nombre en qüestió. En el següent cas, dividirà cada valor del vector `num_mix` entre 10.
 ```{r collapse = TRUE}
@@ -205,10 +244,17 @@ num_mix / 10
 b) **Entre vectors d'igual longitud:** Quan fem una operació matemàtica entre dos o més vectors de la mateixa longitud, R ens farà l'operació entre els valors que tinguin la mateixa posició en el vector. Per exemple, si sumem els vectors `numeric` i `num_dec`, R sumarà el primer valor de `numeric` amb el primer valor de `num_dec`, el segon valor de `numeric` amb el segon valor de `num_dec` i així successivament.  
 
 ```{r collapse=T}
+numeric
+num_dec
 numeric + num_dec
 ```
 
-Podem fer tantes operacions matemàtiques amb tants vectors com vulguem, sempre i quan respectin les normes descrites anteriorment. En canvi, si fem operacions amb vectors que tenen diferent longitud ens donarà error.
+Podem fer tantes operacions matemàtiques amb tants vectors com vulguem, sempre i quan respectin les normes descrites anteriorment. En canvi, si fem operacions amb vectors que tenen diferent longitud ens retornarà un avís.
+
+```{r collapse=T}
+numeric - c(1,2)
+```
+
 
 #### Vector enter
 
@@ -221,241 +267,652 @@ integer_F <- as.integer(c(2021, 2018, 2019, 2019, 2020))
 integer_F
 ```
 
+Recordeu que sempre podem consultar la classe de vector amb la funció `class()`.
+
+```{r collapse=T}
+class(integer_F)
+```
+
+
 
 #### Vector de caràcter
 
-Els vectors de caràcter emmagatzemen caràcters. Per tant, com ja hem vist anteriorment, per crear-los haurem de fer servir les cometes. Per tant, envoltarem cada valor de les cometes que en el següent exemple. També hem de ser molt curosos amb no descuidar-nos cap de les cometes o R ens donarà error si intentem reproduir el codi.
+Els vectors de caràcter emmagatzemen diferents valors de caràcter. Per tant, com ja hem vist anteriorment, per crear-los haurem d'envoltar cada valor amb les cometes (`" "`) com veiem en el següent exemple. També hem de ser molt curosos de no descuidar-nos cap de les cometes o R ens donarà error si intentem reproduir el codi.
 
-```
+```{r collapse=T}
 character <- c("Spain", "Japan", "Germany", "Chile", "Australia")
 ```
 
-Els vectors de caràcter no es restringeixen només als caràcters alfabètics. Podem emmagatzemar també nombres. En aquest cas, com que estan emmagatzemats com a caràcters, no tindran les propietats dels nombres i no hi podrem aplicar aplicacions matemàtiques.
-```
+Els vectors de caràcter no es restringeixen només als caràcters alfabètics. Podem emmagatzemar també nombres. En aquest cas, com que estan emmagatzemats com a caràcters, no tindran les propietats dels nombres i no hi podrem aplicar operacions matemàtiques.
+
+
+```{r collapse=T}
 numbers <- c("4", "8", "15", "16", "23")
+numbers
+class(numbers)
 ```
-I tota mena de símbols.
+
+Als vectors de caràcter hi podem introduir tota mena de símbols no alfanumèrics.
+
 ```
-mingle <- c("4$", "4S8", "!15", "%%16", "漢字%3")
+mingle <- c("4$", "אַפֿגהאַניסטאַן", "البانیہ", "%%16", "漢字%3")
 ```
 
 #### Factor
 
-Una variant dels vectors de caràcter són els **factors**. De fet, el factor és un tipus de vector que per les seves característiques es troba entremig del vector de caràcter i el vector numèric. Formalment, un factor és un vector numèric que pot emmagatzemar caràcters. Aquesta definició no ens servirà de gaire ara mateix, però més endavant veurem la seva utilitat. Per ara, només ens cal saber que es crea si envoltem el concatenat de la funció `factor()`^[Als curiosos que hagueu anat a aquesta nota al peu, us explicarem una mica més sobre els factors. Si despullem el factor que hem creat amb la funció `unclass(factor)`, veiem exactament quina és la seva estructura real. En realitat, un factor és un vector enter i a cada nombre hi assigna una etiqueta. Si no li diem el contrari, l'assignació funciona per ordre alfabètic. Així, al nombre 1 hi ha assignat l'etiqueta "America", al nombre 2 l'etiqueta "Asia", i així successivament.].  
-```
+Una variant dels vectors de caràcter són els **factors**. De fet, el factor és un tipus de vector que per les seves característiques es troba entremig del vector de caràcter i el vector enter. Formalment, un factor és un vector enter que pot emmagatzemar caràcters. Aquesta definició costa d'entendre i no ens servirà de gaire ara mateix, però més endavant comprendrem la seva utilitat. Per ara, només ens cal saber que es crea si envoltem el concatenat amb la funció `factor()`^[Als curiosos que hagueu anat a aquesta nota al peu, us explicarem una mica més sobre els factors. Si despullem el factor que hem creat amb la funció `unclass(factor)`, veiem exactament quina és la seva estructura real. En realitat, un factor és un vector enter i a cada nombre hi assigna una etiqueta. Si no li diem el contrari, l'assignació funciona per ordre alfabètic. Així, al nombre 1 hi ha assignat l'etiqueta "America", al nombre 2 l'etiqueta "Asia", i així successivament.].  
+
+```{r collapse=T}
 factor <- factor(c("Asia", "Asia", "Europe", "America", "Oceania"))
 ```
 
+
 #### Vectors lògics
 
-Els vectors lògics emmagatzemen valors lògics i per tant només poden prendre dos valors: `TRUE` o `FALSE`. A aquestes alçades no l'hi trobarem massa la seva utilitat, pel qual no ens detindrem gaire a explicar res més. Però, igual que els vectors, més endavant comprovarem que són un tipus de vector essencial en l'anàlisi de dades.
+Els vectors lògics emmagatzemen valors lògics i per tant només poden prendre dos valors: `TRUE` o `FALSE`.
 
 ```
 logic <- c(TRUE, FALSE, FALSE, FALSE, TRUE)
 ```
 
+Com havíem explicat anteriorment, sense adonar-nos-en, utilitzem diàriament operadors lògics. Quan busquem a Google pàgines web o fotografies, els operadors lògics es posen a funcionar. Com a exemple hem creat tres vectors, dos de caràcter i un numèric, amb les caràcterístiques de cinc personatges del món de Hollywood.
+
+```{r collapse = TRUE}
+act <- c("Johnny Depp", "Leo DiCaprio", "Jessica Chastain", "Lady Gaga", "Anthony Hopkins")
+hair <- c("brown", "blond", "red", "blonde", "white")
+born <- c(1963, 1974, 1977, 1986, 1937)
+```
+
+Quan busquem per Johnny Depp, Google busca per totes les seves bases de dades i retorna `TRUE` totes aquelles pàgines que coincideixen amb el nom `"Johnny Depp"`.
+
+```{r collapse = TRUE}
+act == "Johnny Depp"
+```
+
+També podem preguntar pels personatges nascuts a partir de 1975. En aquesta mini-base de dades que tenim, R rastrejarà la informació a `born` i ens dirà quins valors són veritat (`TRUE`).
+
+```{r collapse = TRUE}
+born > 1975
+```
+
+Podem fer combinacions més sofisticades de cerca a partir d'operadors lògics. Aristòtil ja apuntava que quan quelcom és a l'hora verdader **i** fals (`T & F`), només pot ser fals. En canvi, si pot ser verdader **o** fals (`T | F`), això vol dir que pot ser verdader. Vegem dos exemples:
+
+- Primer, hem preguntat per aquells personatges de Hollywood que tenen el cabell ros **o bé** (símbol `|`) que han nascut més tard de 1975.
+
+```{r collapse = TRUE}
+blond_or_1975 <- hair == "blond" | born > 1975
+blond_or_1975
+```
+
+- Segon, hem preguntat per aquells personatges de Hollywood que tenen el cabell ros **i** (símbol `&`) han nascut més tard de 1975.
+
+```{r collapse = TRUE}
+blond_and_1975 <- hair == "blond" & born > 1975
+blond_and_1975
+```
+
+A aquestes alçades, potser encara no trobarem massa la utilitat dels vectors lògics, pel qual no ens detindrem a explicar gaire més. Però més endavant comprovarem que són un tipus de vector essencial en l'anàlisi de dades.
+
+
 #### Vectors de data
 
 I finalment, tenim els vectors de data. Com hem pogut suposar, aquests vectors emmagatzemen dates. La manera més senzilla de crear-los és introduir les dates en un vector de caràcter, de manera que a cada valor hi figuri primer amb l'any, després el mes i finalment el dia (YYYY/MM/DD). La funció `as.Date()` ens convertirà aquest vector en un vector de data^[Els curiosos que heu volgut saber més sobre els factors, probablement també us heu interessat sobre els vectors de data. Potser també heu fet el mateix procediment que a la nota al peu anterior i heu mirat de despullar el vector aplicant-hi `class(date)`. Sorpresa, els vectors de data són realitat un vector numèric. R assigna a cada nombre un dia, mes i any concret. Fixeu-vos que la data de 2018 correspon amb el nombre més baix i el de 2021 amb el nombre més alt. Sabríeu trobar quin és l'any 0?].
 
-```
+```{r collapse = TRUE}
 date <- as.Date(c("2021/02/23", "2018/05/15", "2019/06/04", "2019/11/02", "2020/01/23"))
-date[2:5] - date[1:4]
+date
 ```
 
-Tampoc ens detindrem a estudiar a fons els vectors de data, però hem de saber que ens poden ser útils per fer operacions entre dates determinades. Per exemple, amb la operació següent sabem ràpidament que hi ha 1015 dies de diferència entre el 15 de març de 2018 i el 23 de febrer de 2021.
+Tampoc ens detindrem a estudiar a fons els vectors de data, però hem de saber que ens poden ser útils per fer operacions entre moments del temps determinats. Per exemple, amb la operació següent sabem ràpidament que hi ha 1015 dies de diferència entre el 15 de març de 2018 i el 23 de febrer de 2021.
 
-```
+```{r collapse = TRUE}
 as.Date("2021/02/23") - as.Date("2018/05/15")
 ```
-![](img/vector-type.png){width=50%}
 
+#### Resum vectors
 
-<div class="alert alert-warning">
-**Quin vector ens ha creat?**  
+Un bon resum d'aquesta secció el trobareu si consulteu el vostre Global Environment, on heu anat creant vectors de diferents classes. Aquí en podeu veure una selecció. Com podeu comprovar, el Global Environment mostra el nom de l'objecte, seguit de la classe, la longitud i una mostra dels seus primers valors. 
 
-Ho podem veure a l'Environment. També ho podem preguntar.
+![](img/vector-type.png){width=75%}
 
+La classe o els tipus dels objectes es poden consultar amb les funcions `class()` o `typeof()`. A la taula \@ref(tab:types-vector) tenim un resum dels vectors que hem vist i les seves característiques.
+
+```{r types-vector, echo=F}
+tribble(~Classe, ~Tipus, ~ Exemple,
+        "Numèric", "Doble", "c(1.1, 3.5, 10.2)",
+        "Enter", "Enter", "c(10L, 6L, 12L)",
+        "Caràcter",	"Caràcter", "c(\"b\", \"c\", \"d\")",
+        "Factor", "Enter", "factor(c(\"b\", \"c\", \"d\"))",
+        "Lògic", "Lògic", "c(FALSE, TRUE, FALSE)",
+        "Data", "Numèric", "as.Date(c(\"2019/06/04\", \"2019/11/02\", \"2020/01/23\"))") %>% 
+  knitr::kable(caption = "Classes i tipus de vectors")
 ```
-class(logic)
-is(date)
-is(logic)
-```
 
+Hi ha petites diferències entre classe i tipus d'objecte, però per ara no són gaire rellevants. Només les explorarem més endavant, quan sigui necessari. 
+
+<div class="alert alert-info" role="alert">
+**EXERCICIS VECTORS:** [Practica aquí](https://www.jordimas.cat/courses/dataanalysis_en/exercises/data_analysis_en_exercises_basic/#vectors) el què has après en aquesta secció.
 </div>
-
-`class()`
-`rm()`
-`typeof()`
-`attributes()`
-
-
-<div class="alert alert-warning">
-**Què passa si combinem diferents tipus de valors en un mateix vector?**  
-
-Potser alguns ja haureu provat de crear un vector que contingui valors de diferent tipus. Si n'intentem crear un, veurem que, sorprenentment, R no dona error sinó que ens crea el vector. El que fa R és una cosa que se'n diu **coerció de les dades**, que significa la conversió automàtica dels valors d'un tipus als valors d'un altre tipus. Vegem-ne alguns exemples:
-```
-num_log <- c(44, TRUE)
-car_log <- c("Hello", TRUE)
-num_car <- c(43, "Hello")
-num_car_log <- c(43, "Hello", TRUE)
-```
-Si us hi heu fixat, la lògica que segueix és la següent: **Caràcter > Numèric > Lògic**. Entre caràcters i nombres, R crearà un vector de caràcter. Entre nombres i valors lògics, R crearà un vector numèric. Això és així perquè és la manera que ens permet conservar el màxim d'informació. `TRUE` i `FALSE` els podem guardar com a `1` i `0` en un vector numèric, de manera que no perdem la pista sobre què era originàriament cada valor. En canvi, el nombres `100` i `59` no tenim manera de guardar-los en un vector lògic sense perdre informació. Finalment, com que en un vector de caràcter hi podem guardar qualsevol cosa, un valor de caràcter sempre guanyarà la coerció contra qualsevol altre valor.
-</div>
-
 
 <div class="alert alert-danger" role="alert">
+**Errors comuns:** S'ha d'anar molt en compte a l'hora d'escriure codi. Els errors més comuns són:
 
-**ERROR, ERROR, ERROR:** Aquests són els tres errors clàssics que fem quan creem vectors. Sabries identificar-los a cada exemple?^[Solució: En el primer cas, no hem separat el 6 i el 7 amb una coma. En el segon cas, no hem tancat la cometa de France. En el tercer cas, no hem tancat parèntesi.]
+- Descuidar-se la alguna coma entre els arguments d'un vector.
 ```
 c(4, 5, 6 7, 8)
-c("Spain", "France, "Germany", "Italy", "Belgium")
+```
+- No tancar algun parèntesi.
+```
 c(TRUE, FALSE, FALSE, FALSE, TRUE
 ```
+- No posar les cometes abans i després de cada valor de caràcter.
+```
+c("Spain", "France, "Germany", "Italy", "Belgium")
+```
+
+Sabries identificar els errors a cada exemple?^[Solució: En el primer cas, no hem separat el 6 i el 7 amb una coma. En el segon cas, no hem tancat la cometa de France. En el tercer cas, no hem tancat parèntesi.]
 </div>
-EXERCICIS VECTORS
-<div class="alert alert-info" role="alert">
-</div>
+
+
 
 ### Marc de dades
 
-Un conjunt de vectors d'igual longitud forma un **marc de dades**. El marc de dades és un tipus d'objecte que guarda les dades en dues dimensions: les files i les columnes. A continuació, crearem un marc de dades amb tots els tipus de vectors que hem estudiat fins ara. La funció que utilitzarem és la funció `tibble()`. Només cal posar tants noms dels vectors com necessitem a dins de la funció, separats per comes.
+Un conjunt de vectors d'igual longitud forma un **marc de dades**. El marc de dades és un tipus d'objecte que guarda les dades en dues dimensions: les files i les columnes. A continuació, crearem un marc de dades amb totes les classes de vectors que hem estudiat fins ara. La funció que utilitzarem és la funció `tibble()`, del paquet `dplyr`^[Per crear marcs de dades també existeix la funció `data.frame()` però és una mica antiquada i no l'estudiarem.]. Només cal posar tants noms dels vectors com necessitem a dins de la funció, separats per comes.
 
 ```
 tibble(vector1, vector2, vector3, vector4...)
 ```
 
-El requisit que tots els vectors han de tenir la mateixa longitud és indispensable. Si tots els vectors no tenen la mateixa longitud, ens donarà error^[Hi ha la funció `data.frame()` però és una mica antiquada i no l'estudiarem.].
+Per crear un marc de dades, és indispensable que tots els vectors tinguin la mateixa longitud. Si no tenen la mateixa longitud, ens donarà error.
 
 ```{r}
 country <- c("Spain", "Japan", "Germany", "Chile", "Australia")
 year <- as.integer(c(2021, 2018, 2019, 2019, 2020))
 date <- as.Date(c("2021/02/23", "2018/05/15", "2019/06/04", "2019/11/02", "2020/01/23"))
-turnout <- c(74.5, 85.3, 66.1, 77.9, 78.8)
+turnout <- c(0.74, 0.85, 0.66, 0.77, 0.78)
 continent <- factor(c("Europe", "Asia", "Europe", "America", "Oceania"))
 presidential <- logic <- c(TRUE, FALSE, FALSE, FALSE, TRUE)
 elections <- tibble(country, year, date, turnout, continent, presidential)
 ```
 
-Si imprimim el marc de dades `elections` ens dona el següent resultat.
+Si imprimim el marc de dades `elections`, la consola ens retornarà el resultat que observem a continuació.
 
-```{r echo = FALSE}
-elections %>% 
-  knitr::kable()
+```{r df-elections, collapse=T}
+elections
 ```
 
-Si comptem les **files** i les **columnes** d'aquest marc de dades, ràpidament veurem que està format per 5 files i 6 columnes. Com que és un marc de dades petit, podem comptar-les amb relativa facilitat. Però normalment treballarem amb marcs de dades enormes i comptar-los no serà tant fàcil. O sí. Només cal que utilitzem la funció `dim()`^[La funció `dim()` és la que ens permet saber específicament el nombre de files i columnes. Però també podem obtenir aquests nombres imprimint el marc de dades o amb altres funcions com `glimpse()`.].
+Un marc de dades està format per dues dimensions: les files i les columnes. 
 
-```
+- Per **files** ens referim a la longitud dels vectors.
+- Per **columnes** ens referim al nombre de vectors que conformen el marc de dades.
+
+Ràpidament podem comptar que el marc de dades `elections` està format per cinc files i sis columnes. Aquest càlcul és relativament fàcil de fer en marcs de dades petits, però la cosa es complica en marcs de dades de dimensions descomunals. Per sort, les dimensions ens apareixen impreses al principi del marc de dades (veiem: `A tibble: 5 x 6`) anterior i també tenim la funció `dim()` que ens ho calcula^[La funció `dim()` és la que ens permet saber específicament el nombre de files i columnes. Però també podem obtenir aquests nombres imprimint el marc de dades o amb altres funcions com `glimpse()`.].
+
+```{r collapse=T}
 dim(elections)
 ```
 
-Més fàcil així, perquè no crea més objectes del compte. 
-Ha de seguir la següent estructura:
+Hi ha una segona manera de crear marcs de dades, que és posant els vectors directament a dins de la funció `tibble()`. En aquest cas, a dins de cada argument hi haurem de situar el nom que volem que tingui el vector, seguit del símbol igual `=` i el vector corresponent. L'estructura és la següent:
+
 ```
 tibble(nom_variable1 = c(valor1, valor2, valor3),
        nom_variable2 = c(valor1, valor2, valor3),
        nom_variable2 = c(valor1, valor2, valor3))
 ```
-Si ho apliquem al que ja hem fet:
+
+Seguint aquesta estructura, podem crear *exactament* el mateix marc de dades que hem creat anteriorment a l'objecte `elections`.
 
 ```{r}
 elections <- tibble(country = c("Spain", "Japan", "Germany", "Chile", "Australia"), 
                     year = as.integer(c(2021, 2018, 2019, 2019, 2020)), 
                     date = as.Date(c("2021/02/23", "2018/05/15", "2019/06/04", "2019/11/02", "2020/01/23")), 
-                    turnout = c(74.5, 85.3, 66.1, 77.9, 78.8), 
+                    turnout = c(0.74, 0.85, 0.66, 0.77, 0.78), 
                     continent = factor(c("Europe", "Asia", "Europe", "America", "Oceania")), 
                     presidential = c(TRUE, FALSE, FALSE, FALSE, TRUE))
 ```
 
-Quan vulguem fer servir un vector de dins un marc de dades, utilitzarem el símbol `$`. Així, prenent com a referència el marc de dades `elections`, si volem consultar el vector `presidential` farem servir el codi següent:
+Quan vulguem fer servir un vector de dins un marc de dades, utilitzarem el símbol `$`. Així, prenent com a referència el marc de dades `elections`, si volem consultar el vector `country` farem servir el codi següent:
 
-```
-elections$presidential
-```
-
-Selecció d'objectes
-
-
-```
-install.packages()
+```{r collapse = TRUE}
+elections$country
 ```
 
-<div class="alert alert-danger" role="alert">
-**Errors típics**
-Hem de tenir molta cura amb el codi. 
+Recordeu que per guardar un objecte hem d'utilitzar el símbol `<-` i que amb els vectors numèrics només podem fer operacions amb altres vectors de la mateixa longitud o amb un altre valor numèric. Seguint aquesta lògica, podríem posar les xifres del vector `turnout` en percentatges multiplicant en vector pel valor `100` i guardant-lo al vector amb el mateix nom. Amb aquesta acció sobreescribirem el contingut anterior del vector.
 
-- Descuidar-se la coma després de cada vector.
-- No tancar algun parèntesi.
-- Els errors de vector que ja hem vist abans.
+```{r collapse = TRUE}
+elections$turnout <- elections$turnout * 100
+elections$turnout
+```
+
+Si imprimim de nou `elections` veurem el resultat de la modificació.
+
+<div class="alert alert-warning">
+**Què passa si combinem valors de diferent classe en un mateix vector?**  
+
+Anteriorment, hem vist que un vector només pot emmagatzemar valors d'un sol tipus. Heu provat què passa quan intentem crear un vector amb valors de diferent tipus? Sorprenentment, R no dona error sinó que ens crea el vector. El què passa és una cosa que se'n diu **coerció de les dades**, que significa la conversió automàtica dels valors d'un tipus als valors d'un altre tipus. Vegem-ne alguns exemples:
+
+- Combinem un valor numèric i un valor lògic.
+
+```{r collapse=T}
+num_log <- c(44, TRUE)
+num_log
+typeof(num_log)
+```
+
+- Combinem un valor de caràcter i un valor lògic.
+
+```{r collapse=T}
+car_log <- c("Hello", TRUE)
+car_log
+typeof(car_log)
+```
+
+- Combinem un valor numèric i un valor de caràcter.
+
+```{r collapse=T}
+num_car <- c(43, "Hello")
+num_car
+typeof(num_car)
+```
+
+- Combinem un valor numèric, un valor de caràcter i un valor lògic.
+
+```{r collapse=T}
+num_car_log <- c(43, "Hello", TRUE)
+num_car_log
+typeof(num_car_log)
+```
+
+
+Si us hi heu fixat, la lògica que segueix és la següent: **Caràcter > Numèric > Lògic**. Entre caràcters i nombres, R crearà un vector de caràcter. Entre nombres i valors lògics, R crearà un vector numèric. Això és així perquè és la manera que ens permet conservar el màxim d'informació. `TRUE` i `FALSE` els podem guardar com a `1` i `0` en un vector numèric, de manera que no perdem la pista sobre què era originàriament cada valor. En canvi, el nombres `100` i `59` no tenim manera de guardar-los en un vector lògic sense perdre informació. Finalment, com que en un vector de caràcter hi podem guardar qualsevol cosa, un valor de caràcter sempre guanyarà la coerció contra qualsevol altre valor.
 </div>
 
 <div class="alert alert-info" role="alert">
-EXERCICIS MARCS DE DADES
+**EXERCICIS MARCS DE DADES:** [Practica aquí](https://www.jordimas.cat/courses/dataanalysis_en/exercises/data_analysis_en_exercises_basic/#dataframe) el què has après en aquesta secció.
 </div>
+
+
+
+
+## Selecció d'objectes
+
+Normalment amb R treballarem amb marcs de dades de grans dimensions. Tindrem una gran quantitat d'informació de la qual és molt probable que només ens interessi una petita part. Per exemple, imaginem que ens descarreguem una base de dades que conté informació sobre varis països però només ens interessa la que està relacionada amb Espanya.
+
+Per a aquestes coses ens aniran molt bé els claudàtors `[ ]`. Els claudàtors es posen just després de l'objecte en qüestió i ens permeten seleccionar una part de les dades d'aquest objecte. El seu funcionament és una mica diferent si els utilitzem per seleccionar elements d'un vector o elements d'un marc de dades.
+
+```
+objecte[ ]
+```
+
+
+### Selecció de vectors
+
+Per seleccionar els elements d'un vector, posarem els claudàtors just després del vector. A dins dels claudàtors, posarem una de les següents opcions:
+
+A. Un **vector numèric** que indiqui la posició dels elements que es vol conservar. Per exemple:
+
+- Seleccionem el primer i el tercer valor del vector `elections$country`.
+
+```{r collapse=T}
+elections$country[c(1,3)]
+```
+
+- Seleccionem del segon al cinquè valor del vector `elections$country`.
+
+```{r collapse=T}
+elections$country[c(2:5)]
+```
+
+- Seleccionem tots els valors menys el tercer del vector `elections$country` amb el símbol negatiu abans del vector.
+
+```{r collapse=T}
+elections$country[-c(3)]
+```
+
+
+
+B. Un **vector lògic** d'igual longitud al vector original que indiqui amb `TRUE` els elements que es vol seleccionar. Per exemple:
+
+- Seleccionem el segon i el quart valor del vector `elections$country`.
+
+```{r collapse=T}
+elections$country[c(FALSE, TRUE, FALSE, TRUE, FALSE)]
+```
+
+- Utilitzem un vector lògic ja existent per seleccionar els elements que volem. En aquest cas, seleccionem els països de `elections$country` que tenen eleccions presidencials amb el vector `elections$presidential`.
+
+```{r collapse=T}
+elections$country[elections$presidential]
+```
+
+Vegeu l'apartat [**El poder dels vectors lògics**](#powerlogic) per saber-ne més sobre com utilitzar vectors lògics per seleccionar elements d'objectes.
+
+
+### Selecció de marcs de dades
+
+Per seleccionar els elements d'un marc de dades, posarem els claudàtors just després del marc de dades. A dins dels claudàtors hi situarem una coma:
+
+- A l'**esquerra** de la coma hi indicarem les files amb un vector.
+- A la **dreta** de la coma hi indicarem les columnes amb un vector.
+- Si a un costat de la coma no donem cap indicació, ens retornarà totes 
+
+```
+marcdades[files,columnes]
+```
+
+Vegem alguns exemples, utilitzant el marc de dades `elections`:
+
+- Seleccionem de la primera a la tercera fila, deixem les columnes en blanc.
+
+```{r collapse = TRUE}
+elections[1:3, ]
+```
+
+- Seleccionem la segona i la cinquena fila i de la primera a la quarta columna.
+
+```{r collapse = TRUE}
+elections[c(2,5), 1:4]
+```
+
+- Seleccionem la segona i la cinquena fila i eliminem la segona i tercera columna amb el símbol negatiu.
+
+```{r collapse = TRUE}
+elections[c(2,5), -c(2:3)]
+```
+
+
+
+- En el cas de les columnes, també podem introduir un vector amb el nom de les columnes que volem seleccionar.
+
+```{r collapse = TRUE}
+elections[c(1:3), c("country","presidential")]
+```
+
+- També podem utilitzar el vector lògic `elections$presidential`, que ens conservarà les files que són `TRUE`.  
+
+```{r collapse = TRUE}
+elections[elections$presidential,]
+```
+
+Cal recordar que per guardar els canvis haurem de crear un nou objecte. Del contrari, només ho visualitzem a la consola però no ens queda guardat a l'Environment.
+
+<div class="alert alert-info" role="alert">
+**EXERCICIS SELECCIÓ OBJECTES:** Ves a la pàgina web següent i practica amb els exercicis que hi trobaràs.
+</div>
+
+<div class="alert alert-warning">
+[**El poder dels vectors lògics**]{#powerlogic}
+
+Els vectors lògics són una eina importantíssima per seleccionar (més endavant en direm 'filtrar') marcs de dades. Per què ens seran de tanta utilitat? Doncs perquè ens permeten seleccionar els casos que ens interessen d'una manera molt ràpida.
+
+Per exemple, en el següent codi hem descarregat una base de dades dels partits polítics d'Amèrica Llatina. Però resulta que només ens interessen els partits polítics brasilers. Doncs podem fer el següent:
+
+- Descarreguem la base de dades i el convertim en l'objecte `ches_la`.
+
+```{r collapse=T, warning=F, message=F}
+library(readr)
+ches_la <- read_csv("https://www.chesdata.eu/s/ches_la_2020_aggregate_level_v01.csv")
+```
+
+- Consultem la llista de variables. Observem que hi ha el vector `country`.
+
+```{r eval = FALSE}
+glimpse(ches_la)
+```
+
+- Comprovem els noms únics del vector `country`.
+
+```{r collapse=T}
+unique(ches_la$country)
+```
+
+- Efectivament, trobem Brasil entre els països dels quals tenim dades. Ara només hem de crear un vector lògic que marqui `TRUE` les observacions de Brasil i situar aquest vector entre claudàtors.
+
+
+```{r collapse=T, warning=F, message=F}
+ches_br <- ches_la[ches_la$country == "Brasil", ]
+ches_br
+```
+
+</div>
+
+
 
 ## Funcions
 
-A aquestes alçades, en aquest mòdul ja hem vist més d'una dotzena de funcions. Heu conegut funcions com `tibble()`, `c()` `length()`, `ls()` o `class()`, però encara no us les hem presentat formalment.
+A aquestes alçades, en aquest mòdul ja hem conegut més d'una dotzena de funcions com `tibble()`, `c()` `length()`, `ls()` o `class()`, però encara no hem tractat amb profunditat la seva naturalesa. Les **funcions** d'R ens permeten realitzar accions, normalment amb objectes. La millor manera per aprendre què és exactament una funció és creant-ne una de nova. 
 
-### Què és una funció?
+Per analitzar dades amb R no és necessari saber crear funcions. Això ho deixarem per als programadors i per als analistes de dades més avançats. Nosaltres trobarem totes les funcions que necessitem als paquets de base d'R o a paquets que anirem instal·lant i carregant quan ens facin falta. Però hem de saber que la creació de funcions és una de les principals fortaleses dels programaris lliures com R:
 
-Les **funcions** són els verbs d'R i ens permeten realitzar accions, normalment amb objectes. La millor manera per aprendre què és una funció és crear-ne una de nova. Les funcions es creen igual que els objectes, amb el símbol `<-`, seguit de `function()` i de les indicacions de l'acció que durem a terme a dins dels parèntesis `{}`. Fixem-nos en el següent exemple:
+- Un usuari té una necessitat.
+- Crea una funció que cobreixi aquesta necessitat.
+- Posa la funció a disposició de tothom a dins d'un paquet.
+
+De la mateixa manera que anteriorment hem vist com es crea una marc de dades encara que normalment utilitzarem programes com Excel per crear-los, a continuació veurem com es crea una funció. Això ens servirà per comprendre més fàcilment quina és la seva estructura. Seguidament, veurem diverses funcions i descobrirem les maneres d'aprendre per nosaltres mateixos les seves característiques.
+
+
+### Crear una funció
+
+Igual que amb els objectes, les funcions també es creen amb el símbol `<-`. Però a continuació posarem `function()` i seguit de les indicacions de l'acció que durem a terme a dins dels parèntesis `{}`. Fixem-nos en l'exemple següent:
 
 - Creem la funció `per_tres()`.
 - A dins de la funció hi introduïrem l'argument `x`.
-- L'ordre que deixem guardada és: `multiplica x per 3`.
+- L'ordre o acció que deixem guardada és: `multiplica x per 3`.
 
-```
+```{r}
 per_tres <- function(x) {x * 3}
 ```
-Un cop haguem creat la funció `per_tres()`, anem a testar-la: 
-```
-per_tres(x = 4)
-```
-La funció actua i ens retorna el resultat `12`. Això és perquè les indicacions de la funció eren molt clares: `multiplica x per 3`. Com en aquest cas, les funcions ens transformen els objectes i ens retornen el resultat de la transformació.
 
-En el cas anterior, hem fer servir un **argument**. L'argument `x`. Però podríem dissenyar una funció amb varis arguments. 
+Un cop haguem creat la funció `per_tres()`, anem a testar-la. Indicarem quin és el valor de la funció que ha de substituir per `x`: 
+
+```{r collapse=T}
+per_tres(x = 4)
+per_tres(x = elections$turnout)
+per_tres(x = 1:20)
+```
+
+La majoria de funcions fan el que acabem d'observar: transformen objectes i ens retornen el resultat de la transformació. En el primer cas, la funció `per_tres()` retorna el resultat `12`. Això és perquè les indicacions de la funció eren molt clares: `multiplica x per 3`. En el segon i el tercer cas, multipliquem per tres cada nombre del vector numèric indicat a dins de la funció. 
+
+La funció `per_tres()` té un sol **argument**: l'argument `x`. Però podríem dissenyar una funció amb varis arguments:  
 
 - Creem la funció `per_tres_resta()`.
 - Primer li diem que multipliqui l'argument `x` per tres.
-- Després li diem que resti l'argument `y`.
+- Després li diem que resti l'argument `y`, que per defecte serà zero.
+
+```{r collapse=T}
+per_tres_resta <- function(x, y = 0) {x * 3 - y}
 ```
-per_tres_resta <- function(x, y) {x * 3 - y}
-```
-Ara testarem la funció `per_tres_resta()`: 
-```
+
+Ara testarem la funció `per_tres_resta()`, que multiplicarà per tres el valor d'`x` i al resultat obtingut hi restarà `y`: 
+
+```{r collapse=T}
 per_tres_resta(x = 10, y = 5)
 ```
-També serviria així, sempre que respectem l'ordre.
-```
+
+Hi ha quatre idees clau addicionals que hem de saber sobre les funcions:
+
+1. No és necessari posar a dins de les funcions el nom dels arguments. Podem posar directament els valors de cada argument, sempre i quan respectem el seu ordre intern: primer l'argument `x` i després l'argument `y`.
+
+```{r collapse=T}
 per_tres_resta(10, 5)
 ```
 
-L'objectiu d'aquest mòdul no és aprendre a crear funcions, però aquests senzills exercicis poden servir per entendre millor la seva naturalesa. Bàsicament, l'estructura de les funcions és la següent:
+2. Podem consultar l'ordre dels arguments amb funcions com `args()`.
+
+```{r collapse=T}
+args(per_tres_resta)
+```
+
+3. Alguns arguments tenen a vegades valors per defecte. En la funció `per_tres_resta()` hem indicat explíticament que si no indiquem cap valor, l'argument `y` tindrà associat per defecte el valor `0`.
+
+```{r collapse=T}
+per_tres_resta(10)
+```
+
+4. Les funcions també poden operar a dins d'altres funcions. La funció que actua primer és sempre la de dins, i el seu resultat serà utilitzat com a argument de la funció de fora. Observem els dos exemples:
+
+   - `per_tres_resta()` multiplica el valor 10 per tres i hi resta el valor cinc, de manera que el resultat és 25. Aquest resultat l'utilitzem com a argument de la funció `per_tres()`, que multiplicarà 25 per tres, obtenint com a resultat final el valor 75.
+   - `per_tres()` multiplica per tres el valor 10. El resultat 30 és utilitzat com a primer argument de `per_tres_resta()`, que multiplica per tres i n'hi resta el valor cinc, marcat com a segon argument.
+
+```{r collapse=T}
+per_tres(per_tres_resta(10, 5))
+per_tres_resta(per_tres(10), 5)
+```
+
+Com està feta la funció `factor()`? Examina alguna de les funcions que has après en els apartats anteriors. Només has de prémer Ctrl i fer doble clic al nom de la funció.
+
+
+### Quines funcions tenim?
+
+Totes les funcions d'R segueixen la mateixa estructura:
 
 ```
 funcio(argument1, argument2, argument3, ...)
 ```
 
+La part complicada és saber quina acció realitza cada funció, quins arguments té i quins d'aquests arguments tenen associats valors per defecte. Aprendre tot això no té cap altre misteri que practicar i passar-se una bona estona aprenent la funcionalitat i l'estructura interna de cada funció. És per això que **és molt important que cada estudiant es vagi elaborant pel seu compte una llista de funcions** i vagi classificant-les de la manera que cregui més convenient.
+
+A continuació hem establert una classificació de tres tipus de funcions, a les quals els hi aplicarem el contingut de l'objecte `nig`, que és una versió reduïda d'una enquesta realitzada per [Afrobarometer](https://www.afrobarometer.org/) a la població Nigeriana l'any 2021 [@afronig2021]. 
+
+<div class="alert alert-info" role="alert">
+**Prepara les dades d'Afrobarometer**: Descarrega l'arxiu `nig.csv` i importa'l a R a través d'algun dels procediments que coneixes, com la funció `read_csv()` del paquet `tidyr`.
+
+```{r message = FALSE, warning = FALSE}
+nig <- read_csv("nig.csv")
+```
+</div>
 
 
+#### Funcions sense arguments
 
+Un primer bloc de funcions són les que no els cal cap argument. Normalment són funcions que executen accions relacionades amb la interfície d'R, com consultar el Global Environment, els paquets instal·lats o els paquets carregats.
 
-
-
-## Arguments
-
-- A vegades no cal cap argument: `ls()`.
 ```
 ls()
+installed.packages()
+search()
+getwd()
 ```
-- A vegades necessitarem un argument, normalment el primer argument és un objecte: `length()`.
+
+#### Funcions amb un argument
+
+Encara que la majoria de funcions d'R accepten varis arguments, també és cert que normalment les utilitzarem amb només un sol argument. I en la majoria dels casos aquest argument serà un objecte, com un vector o un marc de dades. Aquí tenim varis exemples de com les funcions ens poden respondre a preguntes simples sobre el marc de dades `nig` o els vectors que el conformen:
+
+- **Què conté el marc de dades `nig`?** Amb `glimpse()` fem una ullada a les dades:
+
+```{r collapse=T}
+glimpse(nig)
 ```
-length()
-sum()
-paste()
+
+- **Quina és la llengua dels enquestats?** La funció `unique()` ens retorna els valors únics del vector `nig$language`.
+
+```{r collapse=T}
+unique(nig$language)
 ```
+
+- **Quantes llengües diferents tenim a l'enquesta?** Podem afegir `length()` al codi anterior perquè ens compti el total de valors únics `nig$language`.
+
+```{r collapse=T}
+length(unique(nig$language))
+```
+
+- **Quants ciutadans tenen soldats a prop del municipi on viuen?** Amb `table()` podem veure les freqüències dels valors de `nig$soldiers_nearby`.
+
+```{r collapse=T}
+table(nig$soldiers_nearby)
+```
+
+- **Confia la ciutadania nigeriana en les seves forces armades?**: Si combinem `table()` i `barplot()` podem graficar la distribució per freqüències de `nig$armed_forces_trust`.
+
+```{r eval = FALSE}
+barplot(table(nig$armed_forces_trust))
+```
+
+```{r echo = FALSE}
+barplot(table(nig$armed_forces_trust),
+        names.arg	= c("A lot", "Don't know", "Just little", "Not at all", "Refused", "Somewhat"))
+```
+
+Així doncs, normalment utilitzarem només un argument a les funcions per extreure informació de les dades de forma ràpida.
+
+
+#### Funcions amb varis arguments
+
+Com hem dit abans, però, la majoria de funcions tenen més d'un argument. Això ens complica les coses com a usuaris d'R, perquè si tantes funcions són ja difícils de recordar, encara ho és més si tenen varis arguments associats. Per sort, algunes d'elles tenen arguments **fàcils de recordar**, perquè cada argument té exactament la mateixa funcionalitat. És el cas, per exemple, de tres funcions que ja hem vist anteriorment:
+
+- `c()`: serveix per concatenar diferents valors, de manera que cada valor és un argument.
+- `tibble()`: permet crear un marc de dades a partir de d'ubicar vectors d'igual longitud a cada argument.
+- `table()`: si posem un segon argument en forma de vector de la mateixa longitud del primer argument, ens creuarà les dades en forma de taula de freqüències. 
+
+```{r collapse=T}
+table(nig$situation_country, nig$electricity_nearby)
+```
+
+Les funcions més complicades són aquelles que tenen varis arguments i que cada un dels seus arguments té una funcionalitat diferent. Aquestes són més **difícils de recordar**. Anem a veure un exemple amb `sample()`, una funció que permet obtenir una mostra aleatòria d'un conjunt de dades. Fixem-nos que té varis arguments:
+
+```{r collapse=T}
+args(sample)
+```
+
+L'argument `x` és un vector. Si l'introduïm, `sample()` ens retorna els valors del vector desordenats de manera aleatòria.
+
+```{r eval = FALSE}
+sample(1:10)
+```
+
+El segon argument, `size`, ens retorna un vector de longitud diferent (més petita) al vector que hem posat a `x`. Suposem que fem el sorteig de dues paneres i hem repartit 100 butlletes. Podem decidir els guanyadors fent ús d'R, demanant-li que tregui dos nombres a l'atzar. 
+
+```{r collapse=T}
+sample(1:100, 2)
+```
+
+Però què passa si volem que es repeteixin els valors? 
+
+```{r}
+moneda <- c("Cara", "Creu")
+sample(moneda, 5, replace = TRUE)
+```
+
+Però també podem trucar la moneda
+
+```{r}
+moneda <- c("Cara", "Creu")
+sample(moneda, 10, replace = TRUE, prob = c(0.2, 0.8))
+```
+
+I hem de memoritzar tots els arguments de totes les funcions d'R? Es clar que no! En primer lloc, normalment treballem amb un grup reduït d'entre 30 i 50 funcions, de les quals la majoria utilitzem només un argument. I en segon lloc, per sort tenim les eines d'ajuda per a les funcions que requereixen varis arguments, que veurem en el següent apartat.
+
+
+### Ajuda amb les funcions
+
+Per treballar amb R **és absolutament imprescindible utilitzar les eines d'ajuda** que ofereix la comunitat d'usuaris del programa. No hi ha cap usuari d'R, per molt avançats que siguin els seus coneixements, que no utilitzi l'ajuda en el seu dia a dia. 
+
+Els usuaris d'R acostumen a tenir mala memòria. 
+
+Saber que totes les funcions tenen un menú d'ajuda que convé saber utilitzar.
+
+També és fonamental dominar els recursos de què disposa R que ens ajudaran 
+
+
+
+- Args
+- Menú ajuda
+- Stackoverflow
+- Cheet sheeats
+
+
+
+
+
+
+
+
+
+Algunes ens les transformen o ens les permeten visualitzar d'una determinada manera:
+
+
+
+
 - A vegades necessitarem introduir més informació: 
 ```
 round()
@@ -464,21 +921,8 @@ min()
 seq(inici, final, separació)
 rnorm()
 sample()
+args()
 ```
-
-Arguments
--	?
--	args()
--	max()
--	rep(c(1,2,3), 4, 10)
-
-sample(1:10, 2)
-sample(c("Cara", "Creu"), 1)
-
-
-## Ajuda
-
-
 
 Les podem combinar. De dins cap a fora. Primer ens farà el resultat de la funció més propera a l'objecte. En el següent exemple, primer suma els valors del `vector_numeric` i després arrodoneix el resultat.
 
@@ -488,17 +932,65 @@ round(sum(vector_numeric))
 
 
 
+Anem a veure dos exemples:
+
+Rep
+
+- rep(c(1,2,3), 4, 10)
+
+Sample
+
+- sample(1:10, 2)
+- sample(c("Cara", "Creu"), 1)
+
+
+Arguments
+-	?
+-	args()
+-	max()
+
+
+
+#### Stackoverflow
+
+
+
+
+
 <div class="alert alert-info" role="alert">
 EXERCICIS
 </div>
 
 
-## Importar
-
-També podem clicar el nom de l'arxiu al directori de treball i posar 'Importar'
-
-
 ## Resum
+
+Hem fet moltíssim. Si el que hem explicat està clar, treballar amb R serà bufar i fer ampolles. És per això que val la pena tornar a aquest mòdul més endavant per refrescar alguns conceptes bàsics.
+
+Recordem:
+
+Principalment treballarem amb dos tipus d'objectes:
+
+- **Marcs de dades**, que contenen vectors d'igual longitud.
+- **Vectors, que contenen valors.
+
+Coses a saber sobre els **objectes**:
+
+- Es creen amb `<-`. Tot el que no creem, simplement es reproduirà a la consola però no quedarà registrat enlloc.
+- Els vectors es creen amb `c()` i cada valor es separa per una coma.
+- Els vectors que utilitzarem més són els numèrics, factors, de caràcter i lògics.
+- Els marcs de dades es creen amb `tibble()` i separarem cada vector per una coma.
+- Amb els claudàtors `[ ]` seleccionem fragments de vectors i marcs de dades.
+
+Coses a saber de la funcions:
+
+
+
+Coses a saber sobre R:
+
+- Important llegir la consola.
+- Important saber utilitzar l'ajuda.
+- A l'usuari d'R experimentat li apareixen amb la mateixa freqüència errors a la consola que un usuari poc experimentat. La diferència és la velocitat amb què saben solucionar el problema. 
+
 
 
 

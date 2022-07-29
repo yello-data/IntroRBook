@@ -1,0 +1,86 @@
+---
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+# Extra
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+```
+
+# Contingut
+
+- Excel
+- Importar
+- Guia d'errors
+
+
+
+### Download 
+
+
+
+# Com convertim una base de dades en un objecte d'R?
+
+Les bases de dades que trobem per internet es troben normalment emmagatzemades en:
+
+- Arxius plans com .csv, .txt, .tab o .tsv.
+- Arxius de programes com Excel (.xls o .xlsx), Stata (.dta), SPSS (.sav o .spss)
+
+
+
+
+## Arxius plans
+
+Els arxius plans són arxius de text contenen contenen els valors separats per algun caràcter no alfabètic, com un espai, un guionet, un punt i coma o un punt. El format més habitual és el **.csv** (respon al nom de Comma Separated Values (CSV)), encara que n'hi ha d'altres tipus com els Tab-Separated Values (utilitzarem TXT com a abreviació).
+
+Suposem que tenim un arxiu pla que s'anomena `prova.csv`. Si l'obrim amb el **bloc de notes** del nostre ordinador, veurem que té un aspecte semblant al següent:
+
+>country, population, gdp, land  
+Spain, 47.35, 1281, 505990  
+France, 67.39, 2603, 543940   
+Italy, 59.55, 1886, 302073  
+Germany, 83.24, 3806, 357588   
+
+La primera fila representa els títols de les columnes. A cada fila, la separació entre valors està marcada per una coma en el cas dels CSV (a vegades per punt i coma, mentre que els TXT acostumen a estar separats per tabulacions o espais). El punt serveix per a marcar els decimals.
+
+PAS: Importa l'arxiu a R: Importar arxius és tant fàcil com:
+
+```
+prova <- read_csv("prova.csv")
+```
+
+
+
+Excel (.xls o .xlsx)
+Stata (.dta)
+SPSS (.sav o .spss)
+
+
+
+### Errors
+
+Quan la consola no fa res: (hi ha algun codi inacabat, un parèntesi sense tancar, un codi sense acabar, un %>% sense continuar)
+
+
+
+Error: object not found - Aquest error normalment es produeix quan el document de Markdown es refereix a un objecte que no s'ha definit en el chunk i per tant tampoc apareix en l’environment. No us oblideu de crear els objectes (amb ctrl + enter si teniu microsoft o cmd + enter si teniu mac) i verificar que estiguin a l’environment.
+Error : cannot open the connection. La raó més comuna d’aquest error és que R no pot obrir el fitxer perquè no troba la ruta al document que voleu carregar. Verifiqueu que el fitxer estigui dins la carpeta del projecte que esteu utilitzant.
+Error: could not find function. Normalment causats per typos o perquè no heu carregat el paquet necessari per executar aquesta funció. Assegureu-vos de tenir tots els paquets instal·lats i carregats des del principi.
+R es sensible a las lletres majúscules o minúscules així com als accents. Per tant Nmc no és el mateix que nmc com català no és pas el mateix que catala.
+Recordeu-vos de tancar sempre els parèntesis().
+Els warning messages no són errors. Són avisos que us están informant que hi ha alguna cosa que no quadra tot i que no aturen l’execució de la funció.
+
+
+
+#### Errors RMarkdown
+
+```
+Error: attempt to use zero-length variable name
+```
+- A RMarkdown, vigila que no t'hagis deixat un %>% suelto
+
+
